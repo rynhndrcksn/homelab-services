@@ -1,0 +1,7 @@
+# secrets
+.env
+**/secrets/
+
+# runtime data
+**/data/
+**/logs/
