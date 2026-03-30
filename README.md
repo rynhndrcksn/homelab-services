@@ -22,6 +22,20 @@ Go into each directory and start up the `docker-compose.yml` file:
 cd caddy && docker compose up -d
 ```
 
+### First Time Setup
+
+During the first set up, the observability stuff needs to be started in a specific order:
+
+```bash
+cd /srv/services/loki          && docker compose up -d
+cd /srv/services/prometheus    && docker compose up -d
+cd /srv/services/node-exporter && docker compose up -d
+cd /srv/services/cadvisor      && docker compose up -d
+cd /srv/services/alloy         && docker compose up -d
+cd /srv/services/grafana       && docker compose up -d
+cd /srv/services/caddy         && docker compose up -d
+```
+
 ## Contributing
 
 If you see a problem or improvement that can be made, please open up an issue to discuss it.
