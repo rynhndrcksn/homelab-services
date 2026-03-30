@@ -1,0 +1,17 @@
+services:
+  loki:
+    image: dhi.io/loki:3
+    container_name: loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yml:/etc/loki/loki-config.yml:ro
+      - /mnt/data/loki:/loki
+    command: -config.file=/etc/loki/loki-config.yml
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    external: true

@@ -1,0 +1,25 @@
+services:
+  grafana:
+    image: dhi.io/grafana:12
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"   # keep exposed directly for initial setup; can remove once Caddy is in front
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+      - GF_SERVER_ROOT_URL=https://grafana.home.arpa
+      # Disable telemetry reporting
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+      - GF_ANALYTICS_CHECK_FOR_UPDATES=false
+    volumes:
+      # Persistent Grafana data
+      - /mnt/data/grafana:/var/lib/grafana
+      # Datasources and dashboards defined as code
+      - ./provisioning:/etc/grafana/provisioning:ro
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    external: true

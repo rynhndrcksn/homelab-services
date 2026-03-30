@@ -1,0 +1,99 @@
+// ------------------------------------------------------------
+// DOCKER LOG COLLECTION
+// Alloy discovers running containers via the Docker socket, tails their logs, and forwards them to Loki.
+// ------------------------------------------------------------
+
+// Discover all running Docker containers
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+
+  // Refresh how often Alloy re-checks for new/removed containers
+  refresh_interval = "15s"
+}
+
+// Relabel discovered containers before passing to the log scraper.
+// This controls which labels get attached to your log streams in Loki.
+discovery.relabel "containers" {
+  targets = discovery.docker.containers.targets
+
+  // Use the container name as the "service_name" label in Loki
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "service_name"
+  }
+
+  // Expose the Docker Compose service name as a label
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "compose_service"
+  }
+
+  // Expose the Docker Compose project (directory name) as a label
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_project"]
+    target_label  = "compose_project"
+  }
+}
+
+// Tail logs from all discovered containers
+loki.source.docker "container_logs" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.containers.output
+  forward_to = [loki.process.container_logs.receiver]
+
+  refresh_interval = "15s"
+}
+
+// Process/transform log entries before sending to Loki.
+// Add a stage here for any parsing you want (JSON logs, log level extraction, etc.)
+loki.process "container_logs" {
+  // Extract log level from common formats if present.
+  // Works for structured logs that include a "level" or "severity" field.
+  stage.logfmt {
+    mapping = {
+      "level" = "level",
+    }
+  }
+
+  // Promote extracted "level" into a Loki label so you can filter by it
+  stage.labels {
+    values = {
+      "level" = "level",
+    }
+  }
+
+  forward_to = [loki.write.default.receiver]
+}
+
+
+// ------------------------------------------------------------
+// SYSTEM LOG COLLECTION
+// Tails /var/log/syslog from the host for OS-level events.
+// Note: not every Linux distro has /var/log/syslog
+// ------------------------------------------------------------
+
+local.file_match "system_logs" {
+  path_targets = [{
+    __path__ = "/var/log/syslog",
+    job      = "syslog",
+    host     = constants.hostname,
+  }]
+}
+
+loki.source.file "system_logs" {
+  targets    = local.file_match.system_logs.targets
+  forward_to = [loki.write.default.receiver]
+}
+
+
+// ------------------------------------------------------------
+// LOKI OUTPUT
+// All log sources above forward to this single write target.
+// ------------------------------------------------------------
+
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

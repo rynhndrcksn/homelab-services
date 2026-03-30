@@ -1,0 +1,9 @@
+apiVersion: 1
+
+providers:
+  - name: default
+    type: file
+    updateIntervalSeconds: 30 # Grafana polls this directory for new/changed dashboards
+    options:
+      path: /etc/grafana/provisioning/dashboards
+      foldersFromFilesStructure: true # subdirectory name becomes the Grafana folder name
