@@ -13,7 +13,7 @@ docker network create monitoring
 Clone the repository onto the server:
 
 ```bash
-git clone git@github.com:rynhndrcksn/homelab-services.git /srv/services && cd /srv/services
+git clone https://github.com/rynhndrcksn/homelab-services.git /srv/services && cd /srv/services
 ```
 
 Go into each directory and start up the `docker-compose.yml` file:
