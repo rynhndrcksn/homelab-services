@@ -1,0 +1,34 @@
+# Global options
+{
+  local_certs
+}
+
+# Grafana
+grafana.home.arpa {
+  reverse_proxy grafana:3000
+}
+
+# Prometheus
+prometheus.home.arpa {
+  reverse_proxy prometheus:9090
+}
+
+# Loki (API only for Grafana)
+loki.home.arpa {
+  reverse_proxy loki:3100
+}
+
+# Alloy debug UI
+alloy.home.arpa {
+  reverse_proxy alloy:12345
+}
+
+# # Uptime Kuma
+# uptime.home.arpa {
+#   reverse_proxy uptime-kuma:3001
+# }
+
+# # Forgejo
+# git.home.arpa {
+#   reverse_proxy forgejo:3000
+# }

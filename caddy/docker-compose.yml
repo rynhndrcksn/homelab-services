@@ -1,0 +1,19 @@
+services:
+  caddy:
+    image: dhi.io/caddy:2
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # Caddy stores auto-generated TLS certs here
+      - /mnt/data/caddy/data:/data
+      - /mnt/data/caddy/config:/config
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    external: true
