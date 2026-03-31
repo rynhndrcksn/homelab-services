@@ -46,17 +46,19 @@ loki.source.docker "container_logs" {
 }
 
 // Process/transform log entries before sending to Loki.
-// Add a stage here for any parsing you want (JSON logs, log level extraction, etc.)
 loki.process "container_logs" {
-  // Extract log level from common formats if present.
-  // Works for structured logs that include a "level" or "severity" field.
-  stage.logfmt {
-    mapping = {
-      "level" = "level",
+  stage.json {
+    expressions = {
+      level    = "level",
+      severity = "severity",
     }
   }
 
-  // Promote extracted "level" into a Loki label so you can filter by it
+  stage.label_drop {
+    values = ["severity"]
+  }
+
+  // Promote level into a Loki label if present, no-op if the field wasn't found
   stage.labels {
     values = {
       "level" = "level",
@@ -65,7 +67,6 @@ loki.process "container_logs" {
 
   forward_to = [loki.write.default.receiver]
 }
-
 
 // ------------------------------------------------------------
 // SYSTEM LOG COLLECTION
