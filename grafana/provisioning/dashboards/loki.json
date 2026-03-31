@@ -10,7 +10,7 @@
     },
     {
       "name": "DS_PROMETHEUS",
-      "label": "prometheus",
+      "label": "Prometheus",
       "description": "",
       "type": "datasource",
       "pluginId": "prometheus",
@@ -22,7 +22,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.0.3"
+      "version": "6.7.0"
     },
     {
       "type": "panel",
@@ -47,11 +47,18 @@
       "id": "prometheus",
       "name": "Prometheus",
       "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
     }
   ],
   "annotations": {
     "list": [
       {
+        "$$hashKey": "object:75",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": true,
@@ -62,12 +69,11 @@
       }
     ]
   },
-  "description": "Loki dashboard with quick search and timeline.",
   "editable": true,
-  "gnetId": 13186,
+  "gnetId": 12019,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1602756869174,
+  "iteration": 1586288900167,
   "links": [],
   "panels": [
     {
@@ -76,12 +82,6 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "loki",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -117,7 +117,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(count_over_time({namespace=\"$namespace\", app=\"$workload\", instance=~\"$pod\"} |~ \"$search\"[$__interval]))",
+          "expr": "sum(count_over_time({namespace=\"$namespace\", instance=~\"$pod\"} |~ \"$search\"[$__interval]))",
           "refId": "A"
         }
       ],
@@ -125,7 +125,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Timeline",
+      "title": "",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -141,6 +141,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:168",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -149,6 +150,7 @@
           "show": false
         },
         {
+          "$$hashKey": "object:169",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -164,12 +166,6 @@
     },
     {
       "datasource": "loki",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 25,
         "w": 24,
@@ -179,25 +175,41 @@
       "id": 2,
       "maxDataPoints": "",
       "options": {
-        "showLabels": true,
+        "showLabels": false,
         "showTime": true,
         "sortOrder": "Descending",
         "wrapLogMessage": true
       },
       "targets": [
         {
-          "expr": "{namespace=\"$namespace\", app=\"$workload\", instance=~\"$pod\"} |~ \"$search\"",
+          "expr": "{namespace=\"$namespace\", instance=~\"$pod\"} |~ \"$search\"",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Logs",
+      "title": "Logs Panel",
       "type": "logs"
+    },
+    {
+      "content": "<div style=\"text-align:center\"> For Grafana Loki blog example </div>\n\n\n",
+      "datasource": null,
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 28
+      },
+      "id": 4,
+      "mode": "html",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
     }
   ],
-  "refresh": false,
-  "schemaVersion": 25,
+  "schemaVersion": 22,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -205,10 +217,11 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(kube_pod_info, namespace)",
         "hide": 0,
         "includeAll": false,
+        "index": -1,
         "label": null,
         "multi": false,
         "name": "namespace",
@@ -227,37 +240,16 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
-        "definition": "label_values(mixin_pod_workload{namespace=\"$namespace\"}, workload)",
-        "hide": 0,
-        "includeAll": false,
-        "label": null,
-        "multi": false,
-        "name": "workload",
-        "options": [],
-        "query": "label_values(mixin_pod_workload{namespace=\"$namespace\"}, workload)",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 5,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": ".*",
-        "current": {},
-        "datasource": "prometheus",
-        "definition": "label_values(mixin_pod_workload{namespace=\"$namespace\", workload=\"$workload\"}, pod)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(container_network_receive_bytes_total{namespace=~\"$namespace\"},pod)",
         "hide": 0,
         "includeAll": true,
+        "index": -1,
         "label": null,
-        "multi": false,
+        "multi": true,
         "name": "pod",
         "options": [],
-        "query": "label_values(mixin_pod_workload{namespace=\"$namespace\", workload=\"$workload\"}, pod)",
+        "query": "label_values(container_network_receive_bytes_total{namespace=~\"$namespace\"},pod)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -271,8 +263,8 @@
       {
         "current": {
           "selected": false,
-          "text": "",
-          "value": ""
+          "text": "level=warn",
+          "value": "level=warn"
         },
         "hide": 0,
         "label": null,
@@ -280,22 +272,23 @@
         "options": [
           {
             "selected": true,
-            "text": "",
-            "value": ""
+            "text": "level=warn",
+            "value": "level=warn"
           }
         ],
-        "query": "",
+        "query": "level=warn",
         "skipUrlSync": false,
         "type": "textbox"
       }
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
+      "5s",
       "10s",
       "30s",
       "1m",
@@ -308,7 +301,11 @@
     ]
   },
   "timezone": "",
-  "title": "Loki Dashboard",
+  "title": "Loki Dashboard quick search",
   "uid": "liz0yRCZz",
-  "version": 5
+  "variables": {
+    "list": []
+  },
+  "version": 1,
+  "description": "Loki logs panel with prometheus variables "
 }
