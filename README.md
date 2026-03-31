@@ -24,16 +24,25 @@ cd caddy && docker compose up -d
 
 ### First Time Setup
 
+Ensure you have all the directories and file permissions setup properly:
+
+```bash
+mkdir -p /mnt/data/{prometheus,loki,grafana,caddy/data,caddy/config}
+chown -R 472:472 /mnt/data/grafana
+chown -R 10001:10001 /mnt/data/loki
+chown -R 65534:65534 /mnt/data/prometheus
+```
+
 During the first set up, the observability stuff needs to be started in a specific order:
 
 ```bash
-cd /srv/services/loki          && docker compose up -d
-cd /srv/services/prometheus    && docker compose up -d
+cd /srv/services/loki && docker compose up -d
+cd /srv/services/prometheus && docker compose up -d
 cd /srv/services/node-exporter && docker compose up -d
-cd /srv/services/cadvisor      && docker compose up -d
-cd /srv/services/alloy         && docker compose up -d
-cd /srv/services/grafana       && docker compose up -d
-cd /srv/services/caddy         && docker compose up -d
+cd /srv/services/cadvisor && docker compose up -d
+cd /srv/services/alloy && docker compose up -d
+cd /srv/services/grafana && docker compose up -d
+cd /srv/services/caddy && docker compose up -d
 ```
 
 ## Contributing
