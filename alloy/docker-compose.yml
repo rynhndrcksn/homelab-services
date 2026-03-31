@@ -1,6 +1,6 @@
 services:
   alloy:
-    image: grafana/alloy:1
+    image: grafana/alloy:v1.15.0
     container_name: alloy
     restart: unless-stopped
     ports:
