@@ -1,6 +1,6 @@
 services:
   node-exporter:
-    image: dhi.io/node-exporter:1
+    image: prom/node-exporter:1
     container_name: node-exporter
     restart: unless-stopped
     ports:
