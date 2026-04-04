@@ -12,8 +12,9 @@ scrape_configs:
   # OS-level metrics from Node Exporter
   - job_name: "node-exporter"
     static_configs:
-      - targets:
-          - "node-exporter:9100"
+      - targets: ["node-exporter:9100"]
+        labels:
+          instance: "lab-srv50"
 
   # Docker container metrics from cAdvisor
   - job_name: "cadvisor"
