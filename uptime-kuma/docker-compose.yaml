@@ -5,5 +5,10 @@ services:
     volumes:
       - ./data:/app/data
     ports:
-      # <Host Port>:<Container Port>
       - "3001:3001"
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    external: true
